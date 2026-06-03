@@ -1,0 +1,87 @@
+# config.example.yaml
+# 复制此文件为 config.yaml 并填入实际配置
+
+# ===== 数据路径 =====
+data:
+  clauses_json_path: ""
+  outer_dir: "data/outer"
+  inner_dir: "data/inner"
+  output_dir: "output"
+
+# ===== 解析器配置 =====
+parser:
+  extract_semantics: true
+  llm_model: "Qwen/Qwen3-Next-80B-A3B-Instruct"
+  llm_concurrency: 10
+  use_synonym_dict: true
+  synonym_dict_path: ""  # 空则使用默认路径 ../output/synonym_dictionary.json
+  use_semantics_cache: true  # 启用语义提取结果缓存
+
+# ===== 预筛选配置 =====
+filter:
+  use_stratified: true  # 启用分层筛选以获得更平衡的标签分布
+  layer_ratios:
+    "L1_strong": 0.45    # 强匹配 → 完全符合/基本一致
+    "L2_moderate": 0.40  # 中等匹配 → 部分冲突/无关
+    "L3_weak": 0.0       # 弱匹配已无候选对，配额归零
+    "L4_opposite": 0.15  # 反向匹配 → 直接冲突
+  hard_filter:
+    biz_dim_match: ">= 1"   # 放宽为OR：biz_dim OR subject 有一个匹配即可
+    # 注意：代码中硬筛选已改为 OR 逻辑（biz>=1 OR subj>=1）
+  soft_filter:
+    min_score: 0.3
+    score_weights:
+      biz_dim_match: 0.30
+      subject_match: 0.25
+      object_match: 0.25
+      action_match: 0.10
+      text_similarity: 0.10
+
+# ===== LLM 配置 =====
+llm:
+  api_key: "your-api-key-here"
+  base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+  judgment_model: "Qwen/Qwen3-Next-80B-A3B-Instruct"
+  review_model: "Qwen/Qwen3-Next-80B-A3B-Instruct"
+  max_concurrent_calls: 20  # 尝试20并发
+  rate_limit_per_second: 10.0  # 限流
+  retry_delay_base: 0.5
+  retry_delay_max: 10.0
+
+# ===== 评审配置 =====
+review:
+  pass_threshold: 70
+  max_retries: 2
+  force_accept_on_max_retry: false
+  mark_low_quality: true
+
+# ===== 数据集划分配置 =====
+split:
+  val_clause_ratio: 0.1
+  min_val_pairs: 500
+  random_seed: 42
+  stratify_by_label: true
+
+# ===== 标签分布控制 =====
+label_control:
+  max_irrelevant_ratio: 0.15
+  sampling_strategy: "balanced"
+  target_distribution:
+    "完全符合": 0.20
+    "基本一致": 0.30
+    "部分冲突": 0.25
+    "直接冲突": 0.15
+    "无关": 0.10
+
+# ===== 检查点配置 =====
+checkpoint:
+  enabled: true
+  interval: 200
+  dir: "output/.checkpoints"
+
+# ===== 目标规模 =====
+target:
+  min_train_pairs: 10000
+  max_train_pairs: 20000
+  min_val_pairs: 500
+  max_candidates_to_process: 50000  # 处理约50000条候选对

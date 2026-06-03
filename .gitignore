@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# IDE
+.idea/
+
+# Output (generated files)
+output/
+!output/.gitkeep
+
+# Large data files
+data/outer/full_outer_data.json
+
+# Inner data (proprietary documents)
+data/inner/*.docx
+data/inner/*.doc
+
+# Config (contains secrets)
+config.yaml
+
+# Sensitive
+*.key
+*.pem
+.env
