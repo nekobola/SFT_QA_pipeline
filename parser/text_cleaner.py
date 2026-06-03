@@ -5,8 +5,6 @@ import re
 def clean_text(raw_content: str) -> str:
     """
     清洗文本：去除 HTML 标签、HYPERLINK 残留、多余空白
-
-    复用自: cufrl-r-graph_v5/pipeline/stage1_parse.py 第 64-67 行
     """
     # 去除 HTML 标签
     text = re.sub(r"<[^>]+>", "", raw_content)
@@ -20,8 +18,6 @@ def clean_text(raw_content: str) -> str:
 def clean_clause_text(raw_content: str) -> str:
     """
     清洗条款文本：保留必要的格式，适用于条款正文
-
-    复用自: cufrl-r-graph_v5/pipeline/stage1_parse.py 第 168-171 行
     """
     text = raw_content
     # 移除 HYPERLINK 及其 URL

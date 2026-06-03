@@ -66,8 +66,6 @@ def call_llm(
 ) -> str:
     """
     调用 LLM API
-
-    复用自: cufrl-r-graph_v5/pipeline/stage2_extract.py 第 74-86 行
     """
     if client is None:
         client = get_default_client()
@@ -93,8 +91,6 @@ def call_llm_with_retries(
 ) -> str:
     """
     带重试与指数退避的 LLM 调用
-
-    复用自: cufrl-r-graph_v5/pipeline/stage2_extract.py 第 27-49 行
     """
     for attempt in range(max_retries):
         try:
