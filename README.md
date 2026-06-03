@@ -220,15 +220,17 @@ python run_sft_pipeline.py --mode run
 
 ### 两种实现
 
-项目提供两套实现，推荐使用并发版：
+项目提供两套独立的编排实现，推荐使用并发版：
 
-| 特性 | `run_concurrent.py` | `run_sft_pipeline.py` |
-|------|---------------------|----------------------|
-| 并发模型 | ThreadPoolExecutor | LangGraph 状态图 |
-| 处理方式 | 批量并发（20线程） | 逐条串行 |
-| 断点续传 | 每 5000 条保存 | LangGraph checkpoint |
+| | `run_concurrent.py` | `run_sft_pipeline.py` |
+|---|---|---|
+| 编排方式 | 过程式 + `ThreadPoolExecutor` | `LangGraph` `StateGraph` |
+| 处理策略 | 批量并发（20 线程） | 逐条串行（图循环） |
+| 断点续传 | 每 5000 条保存 JSON 断点 | LangGraph `checkpoint` |
 | 无关标签 | 直接丢弃 | 保留在数据集中 |
-| 冲突生成 | 内嵌在 `_process_single_candidate` | 未集成 |
+| 冲突生成 | 内嵌 | 未集成 |
+
+两者共享 parser/filter/llm 模块，编排层互不依赖。
 
 ### 关键词过滤黑名单
 
